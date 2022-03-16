@@ -20,18 +20,16 @@
       },
       {
         "name": "adminPassword",
+        "toolTip": "Password for the user",
         "type": "Microsoft.Common.PasswordBox",
         "label": {
-          "password": "Password"
+          "password": "Password",
+          "confirmPassword": "Confirm password"
         },
-        "toolTip": "",
         "constraints": {
           "required": true,
           "regex": "^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\\d\\W])|(?=.*\\W)(?=.*\\d))|(?=.*\\W)(?=.*[A-Z])(?=.*\\d)).{12,64}$",
           "validationMessage": "The password must be between 12 and 64 characters long, and contain characters from at least 3 of the following groups: uppercase characters, lowercase characters, numbers, and special characters."
-        },
-        "options": {
-          "hideConfirmation": true
         },
         "visible": true
       },
@@ -40,10 +38,11 @@
         "type": "Microsoft.Common.TextBox",
         "label": "Custom data",
         "toolTip": "Pass custom data configuration.",
-        "placeholder": "",
         "multiLine": true,
         "constraints": {
-          "required": false
+          "required": false,
+          "regex": "^(.*).{0,100000}$",
+          "validationMessage": "The Custom data cannot be more than 100000 characters."
         },
         "visible": true
       }
@@ -122,9 +121,6 @@
             },
             "toolTip": {
               "publicIpAddress": "Use a public IP address if you want to communicate with the virtual machine from outside the virtual network."
-            },
-            "constraints": {
-              "required": {}
             },
             "options": {
               "hideNone": false,

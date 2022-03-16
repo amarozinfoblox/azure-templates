@@ -137,16 +137,13 @@
         "Premium_ZRS",
         "StandardSSD_ZRS"
       ]
-    },
-    "vhdBlobUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "URL pointing to the blob where the VHD to be used to create VM is located. !!! Remove before use in Azure Marketplace !!!"
-      }
     }
   },
   "variables": {
-    "nicName": "[concat(parameters('vmName'), '-networkInterface')]",
+    "imagePublisher":"infoblox",
+    "imageOffer":"infoblox-bloxone-33",
+    "imageSku": "infoblox-bloxone-33",
+    "imageVersion": "3.3.0",
     "nicPrimaryExistingParams": {
       "location": {
         "value": "[parameters('location')]"
@@ -179,7 +176,7 @@
         "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
       }
     },
-    "nicPrimarySetupUrl": "[concat(parameters('artifactsBaseUrl'),'nic-pip-',variables('publicIpExistingOrNone'),'.json')]",
+    "nicPrimarySetupUrl": "[uri(parameters('artifactsBaseUrl'), concat('nic-pip-', variables('publicIpExistingOrNone'), '.json'))]",
     "nsgName": "[concat(parameters('vmName'), '-securityGroup')]",
     "osDiskName": "[concat(parameters('vmName'), uniqueString(resourceGroup().id))]",
     "publicIpAddressType": "Dynamic",
@@ -199,10 +196,10 @@
     "publicIpResourceExisting": "[resourceId(parameters('publicIpExistingRgName'), concat('Microsoft.Network', '/', 'publicIpAddresses'), parameters('publicIpAddressName'))]",
     "publicIpResourceId": "[if(equals(parameters('publicIpNewOrExistingOrNone'), 'none'), '', if(equals(parameters('publicIpNewOrExistingOrNone'), 'new'), variables('publicIpResourceNew'), variables('publicIpResourceExisting')))]",
     "publicIpResourceNew": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
-    "publicIpSetupUrl": "[concat(parameters('artifactsBaseUrl'),'publicip-',variables('publicIpNewOrNone'),'.json')]",
+    "publicIpSetupUrl": "[uri(parameters('artifactsBaseUrl'), concat('publicip-', variables('publicIpNewOrNone'), '.json'))]",
     "subnet1ResourceId": "[concat(variables('vnetResourceId'), '/subnets/', parameters('subnet1Name'))]",
-    "virtualMachineSetUrl": "[concat(parameters('artifactsBaseUrl'),'vm.json')]",
-    "virtualNetworkSetupUrl": "[concat(parameters('artifactsBaseUrl'),'vnet-',parameters('vnetNewOrExisting'),'.json')]",
+    "virtualMachineSetUrl": "[uri(parameters('artifactsBaseUrl'), 'vm.json')]",
+    "virtualNetworkSetupUrl": "[uri(parameters('artifactsBaseUrl'), concat('vnet-', parameters('vnetNewOrExisting'),'.json'))]",
     "vnetNewParams": {
       "location": {
         "value": "[parameters('location')]"
@@ -225,24 +222,6 @@
     "vnetResourceNew": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Compute/images",
-      "apiVersion": "2021-07-01",
-      "name": "[parameters('vmName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "hyperVGeneration": "V1",
-        "storageProfile": {
-          "osDisk": {
-            "blobUri": "[parameters('vhdBlobUrl')]",
-            "osState": "Generalized",
-            "osType": "Linux",
-            "caching": "ReadWrite",
-            "storageAccountType": "[parameters('storageAccountType')]"
-          }
-        }
-      }
-    },
     {
       "apiVersion": "2020-06-01",
       "type": "Microsoft.Network/networkSecurityGroups",
@@ -344,10 +323,20 @@
               "customData": "[base64(parameters('customData'))]"
             }
           },
+          "plan": {
+            "value" : {
+              "publisher": "[variables('imagePublisher')]",
+              "product": "[variables('imageOffer')]",
+              "name": "[variables('imageSku')]"
+            }
+          },
           "storageProfile": {
             "value": {
-              "imageReference": {
-                "id": "[resourceId('Microsoft.Compute/images', parameters('vmName'))]"
+              "imageReference":{
+                "publisher":"[variables('imagePublisher')]",
+                "offer":"[variables('imageOffer')]",
+                "sku":"[variables('imageSku')]",
+                "version":"[variables('imageVersion')]"
               }
             },
             "osDisk": {
