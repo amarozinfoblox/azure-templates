@@ -22,6 +22,9 @@
     },
     "diagnosticsProfile": {
       "type": "object"
+    },
+    "plan": {
+      "type": "object"
     }
   },
   "variables": {
@@ -39,7 +42,8 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
       "location": "[parameters('location')]",
-      "properties": "[variables('properties')]"
+      "properties": "[variables('properties')]",
+      "plan": "[parameters('plan')]"
     }
   ],
   "outputs": {}
