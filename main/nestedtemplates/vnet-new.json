@@ -11,10 +11,10 @@
     "virtualNetworkAddressPrefix": {
       "type": "string"
     },
-    "subnetName": {
+    "subnet1Name": {
       "type": "string"
     },
-    "subnetAddressPrefix": {
+    "subnet1Prefix": {
       "type": "string"
     }
   },
@@ -32,9 +32,9 @@
         },
         "subnets": [
           {
-            "name": "[parameters('subnetName')]",
+            "name": "[parameters('subnet1Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetAddressPrefix')]"
+              "addressPrefix": "[parameters('subnet1Prefix')]"
             }
           }
         ]
